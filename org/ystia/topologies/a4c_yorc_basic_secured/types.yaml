@@ -138,8 +138,6 @@ topology_template:
           repository: fastconnect_nexus
     AnsibleRuntime:
       type: org.ystia.ansible.linux.ansible.nodes.AnsibleRuntime
-      properties:
-        component_version: "2.7.2"
       requirements:
       - hostedOnComputeHost:
           type_requirement: host
