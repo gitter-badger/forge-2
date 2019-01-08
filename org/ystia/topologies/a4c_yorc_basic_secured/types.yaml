@@ -147,7 +147,7 @@ topology_template:
     YorcPlugin:
       type: org.ystia.yorc.alien4cloud.nodes.YorcPlugin
       properties:
-        download_url: "https://dl.bintray.com/ystia/yorc-a4c-plugin/snapshots/develop/:alien4cloud-yorc-plugin-distribution-3.2.0-SNAPSHOT.zip"
+        download_url: "https://dl.bintray.com/ystia/yorc-a4c-plugin/snapshots/develop/alien4cloud-yorc-plugin-distribution-3.2.0-SNAPSHOT.zip"
         name: Yorc
         discriminator: yorc
         pluginId: "alien4cloud-yorc-plugin"
