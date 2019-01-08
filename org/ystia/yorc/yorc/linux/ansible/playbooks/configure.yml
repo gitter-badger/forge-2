@@ -125,7 +125,7 @@
 
     - name: Generate an OpenSSL CSR for the client
       openssl_csr:
-        path: "{{ CONFIG_DIR }}/yorc_server.csr"
+        path: "{{ CONFIG_DIR }}/yorc_client.csr"
         privatekey_path: "{{ CONFIG_DIR }}/yorc_client.key"
         common_name: "yorcClient"
       when: REST_API_PROTOCOL == "https"
