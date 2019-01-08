@@ -145,7 +145,4 @@
         ownca_privatekey_path: "{{ CONFIG_DIR }}/yorc_ca.key"
         ownca_privatekey_passphrase: "{{ CA_PASSPHRASE }}"
         provider: ownca
-        subjectAltName: '{{ subjectAltName }}'
-        extended_key_usage:
-          - serverAuth
       when: REST_API_PROTOCOL == "https"

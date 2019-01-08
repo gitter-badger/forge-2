@@ -127,7 +127,7 @@ topology_template:
             user: admin
             password: admin
             port: 8080
-            protocol: https
+            protocol: http
             secure: false
             network_name: PRIVATE
             initiator: source
