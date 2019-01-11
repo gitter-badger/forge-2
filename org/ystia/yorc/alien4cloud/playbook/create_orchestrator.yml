@@ -27,23 +27,47 @@
         yorc_url: "{{ yorc_url_content.stdout_lines[0] }}"
       when: yorc_url_file.stat.exists and yorc_url_content.stdout_lines|length > 0
 
-    # - name: set url
-    #   set_fact:
-    #     url: "{{ alien_url }}/login?username={{ alien_user }}&password={{ alien_password }}&submit=Login"
+    - name: Check if a certificate authority is defined
+      stat: path="/tmp/a4cPlaybookRegistry/{{ NODE }}/{{ INSTANCE }}/connect_yorc/inputs/ca.pem"
+      register: ca_pem_file
 
-    # - name: "Login onto A4C using {{url}}"
-    #   uri:
-    #     url: "{{url}}"
-    #     method: POST
-    #     return_content: yes
-    #     status_code: 302
-    #     validate_certs: no
-    #     headers:
-    #       Content-Type: "application/x-www-form-urlencoded"
-    #   register: login
-    #   until: login['status']|default(0) == 200
-    #   retries: 5
-    #   delay: 30
+    - name: read Certificate Authority file
+      command: /bin/cat "/tmp/a4cPlaybookRegistry/{{ NODE }}/{{ INSTANCE }}/connect_yorc/inputs/ca.pem"
+      register: ca_certificate_content
+      when: ca_certificate_file.stat.exists
+
+    - name: set ca_certificate variable
+      set_fact:
+        ca_certificate: "{{ ca_certificate_content.stdout }}"
+      when: ca_certificate_file.stat.exists
+
+    - name: Check if a client key is defined
+      stat: path="/tmp/a4cPlaybookRegistry/{{ NODE }}/{{ INSTANCE }}/connect_yorc/inputs/yorc_client.key"
+      register: client_key_file
+
+    - name: read client key file
+      command: /bin/cat "/tmp/a4cPlaybookRegistry/{{ NODE }}/{{ INSTANCE }}/connect_yorc/inputs/yorc_client.key"
+      register: client_key_content
+      when: client_key_file.stat.exists
+
+    - name: set client_key variable
+      set_fact:
+        client_key: "{{ client_key_content.stdout }}"
+      when: client_key_file.stat.exists
+
+    - name: Check if a client certificate is defined
+      stat: path="/tmp/a4cPlaybookRegistry/{{ NODE }}/{{ INSTANCE }}/connect_yorc/inputs/yorc_client.pem"
+      register: client_certificate_file
+
+    - name: read client certificate file
+      command: /bin/cat "/tmp/a4cPlaybookRegistry/{{ NODE }}/{{ INSTANCE }}/connect_yorc/inputs/yorc_client.pem"
+      register: client_certificate_content
+      when: client_certificate_file.stat.exists
+      
+    - name: set client_certificate variable
+      set_fact:
+        client_certificate: "{{ client_certificate_content.stdout }}"
+      when: client_certificate_file.stat.exists
 
     - name: "Login onto A4C using {{ alien_url }}/login?username={{ alien_user }}&password={{ alien_password }}&submit=Login"
       uri:
@@ -109,10 +133,35 @@
     - set_fact:
         orchestratorConfiguration: "{{ orchestratorConfiguration | combine(tmp) }}"
 
-    # - set_fact:
-    #     tmp: '{ "disableDiamondMonitorAgent": "{{ disableDiamondMonitorAgent }}" }'
-    # - set_fact:
-    #     orchestratorConfiguration: "{{ orchestratorConfiguration | combine(tmp) }}"
+    - name: Defining caCertificate property
+      set_fact:
+        tmp: '{ "caCertificate": "{{ ca_certificate }}" }'
+      when: ca_certificate_file.stat.exists
+
+    - name: Adding caCertificate property definition to configuration
+      set_fact:
+        orchestratorConfiguration: "{{ orchestratorConfiguration | combine(tmp) }}"
+      when: ca_certificate_file.stat.exists
+
+    - name: Defining clientCertificate property
+      set_fact:
+        tmp: '{ "clientCertificate": "{{ client_certificate }}" }'
+      when: client_certificate_file.stat.exists
+
+    - name: Adding clientCertificate property definition to configuration
+      set_fact:
+        orchestratorConfiguration: "{{ orchestratorConfiguration | combine(tmp) }}"
+      when: client_certificate_file.stat.exists
+
+    - name: Defining clientKey property
+      set_fact:
+        tmp: '{ "clientKey": "{{ client_key }}" }'
+      when: client_key_file.stat.exists
+
+    - name: Adding clientKey property definition to configuration
+      set_fact:
+        orchestratorConfiguration: "{{ orchestratorConfiguration | combine(tmp) }}"
+      when: client_key_file.stat.exists
 
     - name: Update orchestrator configuration
       uri:
